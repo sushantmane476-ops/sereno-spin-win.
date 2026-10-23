@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#151515"><meta name="description" content="Sereno Burger Spin & Win promotional experience">
+<title>Sereno Burger | Spin & Win</title>
+<style>
+:root{--red:#e52228;--yellow:#ffd22f;--dark:#141414}*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 50% 15%,#4b1115,#171717 60%);color:white;font:16px/1.5 system-ui,-apple-system,Segoe UI,sans-serif;min-height:100svh;text-align:center}main{max-width:650px;margin:auto;padding:25px 18px 45px}.brand{font-size:clamp(30px,7vw,47px);font-weight:1000;letter-spacing:-1.5px;line-height:1}.brand span{color:var(--yellow)}.eyebrow{color:var(--yellow);font-size:12px;letter-spacing:3px;font-weight:800;margin:12px 0}.intro{margin:10px 0 25px;color:#f6dddd}.wheel-wrap{position:relative;width:min(85vw,410px);aspect-ratio:1;margin:25px auto 22px;filter:drop-shadow(0 12px 20px #0008)}canvas{display:block;width:100%;height:100%;border:9px solid var(--yellow);border-radius:50%;background:var(--yellow);transition:transform 5.5s cubic-bezier(.13,.72,.12,1)}.pointer{position:absolute;z-index:3;top:-17px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:18px solid transparent;border-right:18px solid transparent;border-top:37px solid white;filter:drop-shadow(0 2px 3px #0009)}.hub{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:62px;height:62px;border-radius:50%;background:var(--dark);border:6px solid white;display:grid;place-items:center;font-size:11px;font-weight:900;color:var(--yellow);box-shadow:0 0 0 3px #111}button,.share{font:inherit;font-weight:900;border:0;border-radius:99px;padding:14px 26px;cursor:pointer}button.primary{background:var(--yellow);color:#161616;min-width:210px;font-size:19px;box-shadow:0 6px 0 #a87c00}button:disabled{opacity:.55;cursor:not-allowed}.note{font-size:13px;color:#d5c4c4;margin:18px auto;max-width:450px}.result{background:#fff;color:#171717;padding:19px;border-radius:18px;margin:20px auto;max-width:430px;border:4px solid var(--yellow)}.result h2{color:#c71920;margin:0;font-size:29px}.result p{margin:7px 0}.actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:15px 0}.share{background:#26d366;color:#102c19;text-decoration:none;display:inline-block}.secondary{background:#fff;color:#222}.terms{border-top:1px solid #ffffff33;margin-top:28px;padding-top:15px;color:#d4c4c4;font-size:12px}footer{font-size:12px;color:#aaa} [hidden]{display:none!important}@media(prefers-reduced-motion:reduce){canvas{transition-duration:.01ms}}
+</style>
+</head>
+<body><main>
+<div class="brand">SERENO <span>BURGER</span></div><p class="eyebrow">TASTE THAT HITS DIFFERENT!</p><h1>SPIN <span style="color:var(--yellow)">&</span> WIN</h1><p class="intro">Give our promotional wheel a spin and reveal your treat!</p>
+<div class="wheel-wrap"><div class="pointer" aria-hidden="true"></div><canvas id="wheel" width="800" height="800" role="img" aria-label="Prize wheel with five promotional rewards"></canvas><div class="hub">SERENO</div></div>
+<button id="spin" class="primary">SPIN NOW</button><p id="status" class="note" aria-live="polite">Promotional demo: this wheel awards 10% OFF. One spin per browser.</p>
+<section id="result" class="result" hidden aria-live="polite"><div>🎉 YOUR REWARD</div><h2 id="prize">10% OFF</h2><p>Show this screen at Sereno Burger and ask staff to confirm eligibility.</p><p><strong>Promo code: <span id="code">SERENO10</span></strong></p><button class="secondary" id="copy">COPY CODE</button></section>
+<div class="actions"><a class="share" id="whatsapp" href="#" target="_blank" rel="noopener noreferrer">SHARE ON WHATSAPP</a><button class="secondary" id="nativeShare">SHARE LINK</button></div>
+<div class="terms">This is a fixed-result promotional wheel, not a random draw. Reward: 10% OFF. Offer is subject to staff confirmation, availability, and restaurant terms. The one-spin browser limit is a convenience only; it is not fraud-proof. Do not enter personal information on this page.</div><footer>© Sereno Burger · Promotional experience</footer>
+</main><script>
+'use strict';
+// OWNER SETTINGS: Change these values in this file before deployment.
+const REWARDS=['5% OFF','10% OFF','15% OFF','FREE FRIES','TRY AGAIN'];
+const FIXED_WINNER_INDEX=1; // 0=5%, 1=10%, 2=15%, 3=Free Fries, 4=Better Luck Next Time
+const PROMO_CODE='SERENO10';
+const STORAGE_KEY='sereno-spin-win-v1';
+const canvas=document.getElementById('wheel'),ctx=canvas.getContext('2d');
+const colors=['#e52228','#ffd22f','#171717','#f5f5f5','#e52228'];
+const textColors=['#fff','#171717','#fff','#171717','#fff'];
+const n=REWARDS.length,step=2*Math.PI/n,cx=400,cy=400,r=385;
+REWARDS.forEach((reward,i)=>{let a=-Math.PI/2+i*step,b=a+step;ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,r,a,b);ctx.closePath();ctx.fillStyle=colors[i];ctx.fill();ctx.lineWidth=5;ctx.strokeStyle='#fff';ctx.stroke();ctx.save();ctx.translate(cx,cy);ctx.rotate(a+step/2);ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillStyle=textColors[i];ctx.font='900 31px system-ui,sans-serif';ctx.fillText(reward,245,0);ctx.restore()});
+let spinning=false;const spin=document.getElementById('spin'),status=document.getElementById('status'),result=document.getElementById('result');
+function showResult(){document.getElementById('prize').textContent=REWARDS[FIXED_WINNER_INDEX];document.getElementById('code').textContent=PROMO_CODE;result.hidden=false;spin.disabled=true;spin.textContent='ALREADY SPUN';status.textContent='Your promotional reward is shown below.'}
+try{if(localStorage.getItem(STORAGE_KEY)==='used')showResult()}catch(e){}
+spin.addEventListener('click',()=>{if(spinning||spin.disabled)return;spinning=true;spin.disabled=true;status.textContent='Spinning…';const target=(360-((FIXED_WINNER_INDEX+.5)*360/n))%360;canvas.style.transform=`rotate(${360*6+target}deg)`;setTimeout(()=>{try{localStorage.setItem(STORAGE_KEY,'used')}catch(e){}showResult()},5600)});
+document.getElementById('copy').addEventListener('click',async()=>{try{await navigator.clipboard.writeText(PROMO_CODE);document.getElementById('copy').textContent='COPIED!'}catch(e){status.textContent='Please copy the code shown above manually.'}});
+const shareText='Try Sereno Burger Spin & Win! '+location.href;
+document.getElementById('whatsapp').href='https://wa.me/?text='+encodeURIComponent(shareText);
+document.getElementById('nativeShare').addEventListener('click',async()=>{if(navigator.share){try{await navigator.share({title:'Sereno Burger Spin & Win',text:'Try our promotional wheel!',url:location.href})}catch(e){}}else{try{await navigator.clipboard.writeText(location.href);status.textContent='Website link copied!'}catch(e){status.textContent='Copy the website address from your browser.'}}});
+</script></body></html>
